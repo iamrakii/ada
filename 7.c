@@ -1,20 +1,49 @@
-#include<stdio.h>
-int w[10],p[10],n;
-int max(int a,int b)
-{return a>b?a:b;
-}int knap(int i,int m)
-{if(i==n) return w[i]>m?0:p[i];
-if(w[i]>m) return knap(i+1,m);
-return max(knap(i+1,m),knap(i+1,m-w[i])+p[i]);}
-int main()
-{int m,i,max_profit;
-printf("\nEnter the no. of objects:");
-scanf("%d",&n);
-printf("\nEnter the knapsack capacity:");
-scanf("%d",&m);
-printf("\nEnter profit followed by weight:\n");
-for(i=1; i<=n; i++)
-scanf("%d %d",&p[i],&w[i]);
-max_profit=knap(1,m);
-printf("\nMax profit=%d",max_profit);
+#include <stdio.h>
+#define MAX 50
+int p[MAX], w[MAX], x[MAX];
+double maxprofit;
+int n, m, i;
+void greedyKnapsack(int n, int w[], int p[], int m)
+{double ratio[MAX];
+for (i = 0; i < n; i++)
+{ratio[i] = (double)p[i] / w[i];}
+for (i = 0; i < n - 1; i++)
+{for (int j = i + 1; j < n; j++)
+{if (ratio[i] < ratio[j])
+{double temp = ratio[i];
+ratio[i] = ratio[j];
+ratio[j] = temp;
+int temp2 = w[i];
+w[i] = w[j];
+w[j] = temp2;
+temp2 = p[i];
+p[i] = p[j];
+p[j] = temp2;}}}
+int currentWeight = 0;
+maxprofit = 0.0;
+for (i = 0; i < n; i++)
+{if (currentWeight + w[i] <= m)
+{x[i] = 1;
+currentWeight += w[i];
+maxprofit += p[i];}
+else
+{x[i] = (m - currentWeight) / (double)w[i];
+maxprofit += x[i] * p[i];
+break;}}
+printf("Optimal solution for greedy method: %.1f\n", maxprofit);
+printf("Solution vector for greedy method: ");
+for (i = 0; i < n; i++)
+printf("%d\t", x[i]);
+}int main()
+{printf("Enter the number of objects: ");
+scanf("%d", &n);
+printf("Enter the objects' weights: ");
+for (i = 0; i < n; i++)
+scanf("%d", &w[i]);
+printf("Enter the objects' profits: ");
+for (i = 0; i < n; i++)
+scanf("%d", &p[i]);
+printf("Enter the maximum capacity: ");
+scanf("%d", &m);
+greedyKnapsack(n, w, p, m);
 return 0;}
